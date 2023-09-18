@@ -2,14 +2,21 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from .models import CarDealer
+from .restapis import get_dealers_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
 import os
+import environ
+
+# Read environment variables
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -102,11 +109,23 @@ def registration_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
     if request.method == "GET":
-        path = os.path.join(app_name, 'index.html')
-
-        return render(request, path, context)
+        # url = "your-cloud-function-domain/dealerships/dealer-get"
+        # url = "https://89263953-52e1-446a-bf80-442cba1c187c-bluemix.cloudantnosqldb.appdomain.cloud/dealerships/_all_docs"
+        # apikey = 'apikey-3f050634fe854a2ba31db97380893f98'
+        # password = 'fa5938d6be2b7dd0eb75aebb89729e222c318d55'
+        include_docs = True
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(
+            url=env('CLOUDANT_URL'),
+            apikey=env('CLOUDANT_API_KEY'),
+            password=env('CLOUDANT_PASSWORD'),
+            include_docs=include_docs,
+        )
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):

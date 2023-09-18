@@ -111,9 +111,6 @@ def registration_request(request):
 def get_dealerships(request):
     if request.method == "GET":
         # url = "your-cloud-function-domain/dealerships/dealer-get"
-        # url = "https://89263953-52e1-446a-bf80-442cba1c187c-bluemix.cloudantnosqldb.appdomain.cloud/dealerships/_all_docs"
-        # apikey = 'apikey-3f050634fe854a2ba31db97380893f98'
-        # password = 'fa5938d6be2b7dd0eb75aebb89729e222c318d55'
         include_docs = True
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(

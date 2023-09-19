@@ -79,4 +79,33 @@ class CarDealer:
     def __str__(self):
         return "Dealer name: " + self.full_name
 
+
 # <HINT> Create a plain Python class `DealerReview` to hold review data
+
+SENTIMENT_DICT = {
+    'positive': 'Positive',
+    'neutral': 'Neutral',
+    'negative': 'Negative'
+}
+
+
+class DealerReview:
+
+    def __init__(self, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment, id):
+        self.id = id
+        self.dealership = dealership
+        self.name = name
+        self.purchase = purchase
+        self.review = review
+        self.purchase_date = purchase_date
+        self.car_make = car_make
+        self.car_model = car_model
+        self.car_year = car_year
+        # one of positive, neutral, or negative
+        if sentiment in SENTIMENT_DICT:
+            self.sentiment = SENTIMENT_DICT[sentiment]
+        else:
+            self.sentiment = SENTIMENT_DICT['neutral']
+
+    def __str__(self):
+        return "Review: " + self.review

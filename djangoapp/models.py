@@ -82,10 +82,10 @@ class CarDealer:
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 
-SENTIMENT_DICT = {
-    'positive': 'Positive',
-    'neutral': 'Neutral',
-    'negative': 'Negative'
+SENTIMENT = {
+    0: 'positive',
+    1: 'neutral',
+    2: 'negative',
 }
 
 
@@ -102,10 +102,7 @@ class DealerReview:
         self.car_model = car_model
         self.car_year = car_year
         # one of positive, neutral, or negative
-        if sentiment in SENTIMENT_DICT:
-            self.sentiment = SENTIMENT_DICT[sentiment]
-        else:
-            self.sentiment = SENTIMENT_DICT['neutral']
+        self.sentiment = sentiment
 
     def __str__(self):
         return "Review: " + self.review

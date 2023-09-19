@@ -13,45 +13,60 @@
 </head>
 <body>
 <!--Add review form here -->
-<form method="post">
-    {#        time #}
-    <div class="form-group">
-        <label for="date">Date:</label>
-        <input type="text" class="form-control" id="date" name="date" placeholder="Enter date" value="{{ time }}"
-               required>
-    </div>
-    {#        name #}
-    <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
-    </div>
-    {#        dealership from 'dealer' #}
-    <div class="form-group">
-        <label for="dealership">Dealership:</label>
-        <select class="form-control" id="dealership" name="dealership" required>
-            {% for dealer in dealers %}
-                <option value="{{ dealer.id }}">{{ dealer.full_name }}</option>
-            {% endfor %}
-        </select>
+<div style="min-height: 190px"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md">
+            <h4 class="mb-5"> Add a review for <strong>{{ dealer.full_name }}</strong></h4>
+            <form action="{% url 'djangoapp:add_review' dealer.id %}" method="post">
+                <H5>Your Name:</H5><br>
+                {% csrf_token %}
+                <input class="form-control" id="name" name="name" size="30" required></textarea><br>
+                <H5>Enter the review content:</H5><br>
+                <textarea class="form-control" id="content" name="content" rows="2" required></textarea><br>
+                <div class="form-check mt-5">
+                    <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+                    <label class="form-check-label">Has purchased car from {{ dealer.full_name }} ?<label> <span
+                            style="color: rgb(128,128,128); font-weight: 300; padding-left: 5px;">(select purchased car information below if checked)</span>
+                    </label>
+                    </label>
+                </div>
 
+                <div class="d-flex mt-3">
+                    <div class="mr-5">
+                        <h5>Select your car (model-make-year):</h5><br/>
+                        <select name="car" id="car" class="form-select"><br>
+                            {% for car in cars %}
+                                <option selected
+                                        value={{ car.id }}>{{ car.name }}-{{ car.car.name }}-{{ car.year|date }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <h5>Select Your Purchase Date:</h5><br/>
+                        <div class="input-group date" data-provide="datepicker-inline">
+                            <input class="date-own form-control" type="date" name="purchasedate" id="purchasedate"><br>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-5" type="submit">Add review</button>
+            </form>
+        </div>
     </div>
-    {#        review #}
-    <div class="form-group">
-        <label for="review">Review:</label>
-        <textarea class="form-control" id="review" name="review" rows="3" required>{{ review }}</textarea>
+</div>
+<div style="min-height: 200px"></div>
+<footer class="bg-light text-center text-lg-start mt-5">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+        © 2022
+        <a class="text-dark" href="{% url 'djangoapp:index' %}"
+        >Dealership Review</a
+        >
     </div>
-    {#        purchase #}
-    <div class="form-group">
-        <label for="purchase">Purchase:</label>
-        <select class="form-control" id="purchase" name="purchase" required>
-            <option value="True">True</option>
-            <option value="False">False</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="reset" class="btn btn-primary">Reset</button>
-    </div>
-</form>
+</footer>
 </body>
+<script type="text/javascript">
+    $('.date-own').datepicker({
+        format: 'mm/dd/yyyy'
+    });
+</script>
 </html>

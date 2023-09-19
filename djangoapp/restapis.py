@@ -1,6 +1,6 @@
 import requests
 import json
-from .models import CarDealer, DealerReview, SENTIMENT_DICT
+from .models import CarDealer, DealerReview, SENTIMENT
 from requests.auth import HTTPBasicAuth
 import environ
 import os
@@ -199,11 +199,10 @@ def get_dealer_reviews_from_cf(url, dealerId):
         # For each dealer object
         for review_doc in reviews:
             # Create a CarDealer object with values in `doc` object
-            print('here')
-            print("review" + str(review_doc['review']))
-            review = analyze_review_sentiments(review_doc['review'])
-            print("review" + str(review))
-            print('here')
+
+            sentiment = analyze_review_sentiments(review_doc["review"])
+
+            print(f"Review First: {review_doc['review']} {sentiment}")
 
             review_obj = DealerReview(
                 dealership=review_doc["dealership"],
@@ -215,7 +214,7 @@ def get_dealer_reviews_from_cf(url, dealerId):
                 car_make=review_doc["car_make"] if review_doc["purchase"] else None,
                 car_model=review_doc["car_model"] if review_doc["purchase"] else None,
                 car_year=review_doc["car_year"] if review_doc["purchase"] else None,
-                sentiment=analyze_review_sentiments(review_doc["review"]) if review_doc["purchase"] else None
+                sentiment=sentiment,
             )
             results.append(review_obj)
     return results
@@ -231,12 +230,12 @@ def analyze_review_sentiments(text):
             "text": text,
             "features":
                 {
-                    "sentiment": SENTIMENT_DICT
+                    "sentiment": {}
                 }
         }
     )
 
-    print(params)
+    result = 'neutral'
 
     response = requests.post(
         env('NLU_API_URL'),
@@ -245,9 +244,8 @@ def analyze_review_sentiments(text):
         auth=HTTPBasicAuth('apikey', env('NLU_API_KEY'))
     )
 
-    print(response.json())
-
     try:
-        return response.json()['sentiment']['document']['label']
+        result = response.json()['sentiment']['document']['label']
+        return result
     except KeyError:
-        return 'neutral'
+        return result

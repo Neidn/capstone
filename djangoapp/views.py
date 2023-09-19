@@ -132,22 +132,25 @@ def get_dealer_details(request, dealer_id):
         url = f'{env("CLOUDANT_URL")}/reviews/_find'
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         context["reviews"] = reviews
+
+        for review in reviews:
+            print(f"Review: {review.review} {review.sentiment}")
+
         return render(request, f'{template_dir}/dealer_details.html', context)
 
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
-def add_review(request):
+def add_review(request, dealer_id):
     context = {}
 
     if request.method == "GET":
-        url = f'{env("CLOUDANT_URL")}/dealerships/_all_docs'
-        dealers = get_dealers_from_cf(url)
+        url = f'{env("CLOUDANT_URL")}/dealerships/_find'
+        dealer = get_dealer_by_id_from_cf(url, dealer_id)
 
-        context["dealers"] = dealers
-        context['time'] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        context['cars'] = CarModel.objects.all()
+        cars = CarModel.objects.filter(dealerId=dealer_id)
 
-        print(CarModel.objects.all())
+        context["cars"] = cars
+        context["dealer"] = dealer
 
         return render(request, f'{template_dir}/add_review.html', context)
